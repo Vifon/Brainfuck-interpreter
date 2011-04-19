@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 				putchar(*p);
 				break;
 			case ',':
-				*p = getchar()
+				*p = getchar();
 				break;
 			case '[':
 				if (*p == 0)
