@@ -1,11 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <vector>
 
 int main(int argc, char *argv[])
 {
 	FILE *f;
 	static int array[256];
 	int *p = array;
+
+	std::vector<long int> brackets;
 
 	int i;
 
@@ -63,20 +66,14 @@ int main(int argc, char *argv[])
 							--i;
 					}
 				}
+				else
+				{
+					brackets.push_back(ftell(f)-1);
+				}
 				break;
 			case ']':
-				i = 1;
-				fseek(f, -1, SEEK_CUR);
-				while (i != 0)
-				{
-					fseek(f, -1, SEEK_CUR);
-					c = fgetc(f);
-					fseek(f, -1, SEEK_CUR);
-					if (c == ']')
-						++i;
-					else if (c == '[')
-						--i;
-				}
+				fseek(f, brackets.back(), SEEK_SET);
+				brackets.pop_back();
 				break;
 			default:
 				break;

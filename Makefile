@@ -11,10 +11,10 @@ debug: CFLAGS += -DDEBUG -g
 debug: all
 
 ./brainfuck: $(OBJS)
-	$(CC) $(LFLAGS) $(OBJS) -o ./brainfuck
+	$(CXX) $(LFLAGS) $(OBJS) -o ./brainfuck
 
-objs/brainfuck.o: src/brainfuck.c
-	$(CC) $(CFLAGS) -c src/brainfuck.c -o objs/brainfuck.o
+objs/brainfuck.o: src/brainfuck.cpp
+	$(CXX) $(CXXFLAGS) -c src/brainfuck.cpp -o objs/brainfuck.o
 
 objs:
 	@mkdir objs
