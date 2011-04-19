@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
 	FILE *f;
-	static int array[16];
+	static int array[256];
 	int *p = array;
 
 	int i;
@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
 					fprintf(stderr, "Error: could not read the key\n");
 					exit(4);
 				}
-				getchar();
 				break;
 			case '[':
 				if (*p == 0)
