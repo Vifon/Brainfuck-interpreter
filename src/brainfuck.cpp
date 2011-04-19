@@ -5,24 +5,21 @@
 int main(int argc, char *argv[])
 {
 	FILE *f;
-	static int array[256];
-	int *p = array;
-
+	static char array[30000];
+	char *p = array;
 	std::vector<long int> brackets;
-
-	int i;
-
+	long int i;
 	char c = 0;
 
 	if (argc < 2)
 	{
-		fprintf(stderr, "Usage:\n\tbrainfuck FILE_TO_READ\n");
+		fputs("Usage:\n\tbrainfuck FILE_TO_READ\n", stderr);
 		exit(1);
 	}
 
 	if ((f = fopen(argv[1], "r")) == NULL)
 	{
-		fprintf(stderr, "Cannot open the file\n");
+		fputs("Cannot open the file\n", stderr);
 		exit(2);
 	}
 
@@ -44,14 +41,10 @@ int main(int argc, char *argv[])
 				--p;
 				break;
 			case '.':
-				printf("%c", (char)(*p));
+				putchar(*p);
 				break;
 			case ',':
-				if((*p = getchar()) == EOF)
-				{
-					fprintf(stderr, "Error: could not read the key\n");
-					exit(4);
-				}
+				*p = getchar()
 				break;
 			case '[':
 				if (*p == 0)
@@ -67,9 +60,7 @@ int main(int argc, char *argv[])
 					}
 				}
 				else
-				{
 					brackets.push_back(ftell(f)-1);
-				}
 				break;
 			case ']':
 				fseek(f, brackets.back(), SEEK_SET);
@@ -81,7 +72,7 @@ int main(int argc, char *argv[])
 	}
 	if (fclose(f))
 	{
-		fprintf(stderr, "The file was not closed properly\n");
+		fputs("The file was not closed correctly\n", stderr);
 		exit(3);
 	}
 
