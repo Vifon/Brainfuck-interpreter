@@ -1,0 +1,4 @@
+Brainfuck esoteric language interpreter
+
+Usage:
+	brainfuck FILE_TO_READ
