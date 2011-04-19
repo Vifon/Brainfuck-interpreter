@@ -44,11 +44,12 @@ int main(int argc, char *argv[])
 				printf("%c", (char)(*p));
 				break;
 			case ',':
-				if(!scanf("%c", (char*)p))
+				if((*p = getchar()) == EOF)
 				{
 					fprintf(stderr, "Error: could not read the key\n");
 					exit(4);
 				}
+				getchar();
 				break;
 			case '[':
 				if (*p == 0)
