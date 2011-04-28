@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
 					brackets.push_back(ftell(f)-1);
 				break;
 			case ']':
-				fseek(f, brackets.back(), SEEK_SET);
+				if (*p != 0)
+					fseek(f, brackets.back(), SEEK_SET);
 				brackets.pop_back();
 				break;
 			default:
