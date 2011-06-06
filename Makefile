@@ -3,18 +3,27 @@ CXX=g++
 CFLAGS=-pedantic -O2
 CXXFLAGS=$(CFLAGS)
 LFLAGS=
-OBJS=objs/brainfuck.o 
+OBJS=objs/brainfuck.o
 
 all: objs ./brainfuck
 
-debug: CFLAGS += -DDEBUG -g
-debug: all
-
 ./brainfuck: $(OBJS)
-	$(CXX) $(LFLAGS) $(OBJS) -o ./brainfuck
+	@echo "	LINK brainfuck"
+	@$(CXX) $(LFLAGS) $(OBJS) -o ./brainfuck
+	@echo "	`tput setaf 2``tput bold`COMPILATION SUCCESSFUL`tput sgr0`"
 
 objs/brainfuck.o: src/brainfuck.cpp
-	$(CXX) $(CXXFLAGS) -c src/brainfuck.cpp -o objs/brainfuck.o
+	@echo "	CXX src/brainfuck.cpp"
+	@$(CXX) $(CXXFLAGS) -c src/brainfuck.cpp -o $@
+
+
+
+
+d: debug
+debug: CFLAGS += -DDEBUG -g -O0
+debug: CC=g++
+debug: CXX=g++
+debug: all
 
 objs:
 	@mkdir objs
@@ -22,10 +31,13 @@ clean_objs:
 	@if [ "objs" != "." -a -d "objs" ]; then rm -r "objs"; fi
 clean_bin:
 	@rm -f ./brainfuck
+c: clean
 clean: clean_objs clean_bin
-	@echo "\tCLEAN"
+	@echo "	CLEAN"
+f: fresh
 fresh: clean
 	@make all
+r: run
 run: all
 	@././brainfuck
 

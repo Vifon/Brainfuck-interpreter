@@ -1,32 +1,58 @@
 #include <cstdio>
 #include <cstdlib>
-#include <vector>
+#include <stack>
+
+// source: http://www.anyexample.com/programming/c/how_to_load_file_into_memory_using_plain_ansi_c_language.xml
+int loadfile(const char* name, char** script)
+{
+	int size = 0;
+	FILE* f = fopen(name, "rb");
+	if (f == NULL)
+	{
+		*script = NULL;
+		return -1;
+	}
+	fseek(f, 0, SEEK_END);
+	size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	*script = new char[size+1];
+	if (size != (int)fread(*script, sizeof(char), size, f))
+	{
+		delete [] *script;
+		return -2;
+	}
+	fclose(f);
+	(*script)[size] = '\0';
+	return size;
+}
 
 int main(int argc, char *argv[])
 {
-	FILE *f;
-	static char array[30000];
-	char *p = array;
-	std::vector<long int> brackets;
-	long int i;
-	char c = 0;
+	static char array[30000];		// fields
+	char *p = array;				// pointer to the current field
+	std::stack<long int> brackets;		// loop beginnings locations
 
-	if (argc < 2)
+	char* script;		// script data
+	int size;			// size of the script file
+
+	if (argc < 2)		// Was the script name specified?
 	{
 		fputs("Usage:\n\tbrainfuck FILE_TO_READ\n", stderr);
 		exit(1);
 	}
 
-	if ((f = fopen(argv[1], "r")) == NULL)
+	if ((size = loadfile(argv[1], &script)) == -1)		// Load the script. Have the script been loaded correctly?
 	{
 		fputs("Cannot open the file\n", stderr);
 		exit(2);
 	}
 
 
-	while ((c = fgetc(f)) != EOF)
+	long int i = 0;		// current script character number
+
+	while (script[i] != '\0')		// main loop
 	{
-		switch (c)
+		switch (script[i++])
 		{
 			case '+':
 				++(*p);
@@ -49,33 +75,31 @@ int main(int argc, char *argv[])
 			case '[':
 				if (*p == 0)
 				{
-					i = 1;
-					while (i != 0)
+					int j = 1;
+					char c;
+					while (j != 0)		// find the loop end
 					{
-						c = fgetc(f);
+						c = script[i++];
 						if (c == '[')
-							++i;
+							++j;
 						else if (c == ']')
-							--i;
+							--j;
 					}
 				}
 				else
-					brackets.push_back(ftell(f)-1);
+					brackets.push(i-1);		// save the loop beginning location
 				break;
 			case ']':
 				if (*p != 0)
-					fseek(f, brackets.back(), SEEK_SET);
-				brackets.pop_back();
+					i = brackets.top();		// return to the saved location
+				brackets.pop();
 				break;
 			default:
 				break;
 		}
 	}
-	if (fclose(f))
-	{
-		fputs("The file was not closed correctly\n", stderr);
-		exit(3);
-	}
+
+	delete [] script;		// free the memory allocated for the script
 
 	return 0;
 }
