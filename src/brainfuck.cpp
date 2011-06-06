@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	if ((size = loadfile(argv[1], &script)) == -1)		// Load the script. Have the script been loaded correctly?
+	if ((size = loadfile(argv[1], &script)) < 0)		// Load the script. Have the script been loaded correctly?
 	{
 		fputs("Cannot open the file\n", stderr);
 		exit(2);
