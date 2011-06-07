@@ -1,58 +1,53 @@
-#include <cstdio>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <stack>
 
-// source: http://www.anyexample.com/programming/c/how_to_load_file_into_memory_using_plain_ansi_c_language.xml
-int loadfile(const char* name, char** script)
+std::string loadfile(const char* name)
 {
-	int size = 0;
-	FILE* f = fopen(name, "rb");
-	if (f == NULL)
-	{
-		*script = NULL;
-		return -1;
-	}
-	fseek(f, 0, SEEK_END);
-	size = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	*script = new char[size+1];
-	if (size != (int)fread(*script, sizeof(char), size, f))
-	{
-		delete [] *script;
-		return -2;
-	}
-	fclose(f);
-	(*script)[size] = '\0';
-	return size;
+	std::ifstream f;
+	std::stringbuf sb;
+	f.exceptions(std::ios::failbit);
+
+	f.open(name, std::ios::binary | std::ios::in);
+	f.get(sb, EOF);
+	f.close();
+	std::string str(sb.str());
+	return str;
 }
 
 int main(int argc, char *argv[])
 {
 	static char array[30000];		// fields
 	char *p = array;				// pointer to the current field
-	std::stack<long int> brackets;		// loop beginnings locations
+	std::stack<std::string::iterator> brackets;		// loop beginnings locations
 
-	char* script;		// script data
+	std::string script;		// script data
 	int size;			// size of the script file
 
 	if (argc < 2)		// Was the script name specified?
 	{
-		fputs("Usage:\n\tbrainfuck FILE_TO_READ\n", stderr);
+		std::cerr << "Usage:\n\tbrainfuck FILE_TO_READ" << std::endl;
 		exit(1);
 	}
 
-	if ((size = loadfile(argv[1], &script)) < 0)		// Load the script. Have the script been loaded correctly?
+	try
 	{
-		fputs("Cannot open the file\n", stderr);
+		script = loadfile(argv[1]);
+	}
+	catch (std::ifstream::failure)
+	{
+		std::cerr << "Cannot open the file" << std::endl;
 		exit(2);
 	}
 
 
-	long int i = 0;		// current script character number
+	std::string::iterator i = script.begin();
 
-	while (script[i] != '\0')		// main loop
+	while (*i != '\0')		// main loop
 	{
-		switch (script[i++])
+		switch (*i++)
 		{
 			case '+':
 				++(*p);
@@ -75,15 +70,15 @@ int main(int argc, char *argv[])
 			case '[':
 				if (*p == 0)
 				{
-					int j = 1;
+					int nestLevel = 1;
 					char c;
-					while (j != 0)		// find the loop end
+					while (nestLevel != 0)		// find the loop end
 					{
-						c = script[i++];
+						c = *i++;
 						if (c == '[')
-							++j;
+							++nestLevel;
 						else if (c == ']')
-							--j;
+							--nestLevel;
 					}
 				}
 				else
@@ -98,8 +93,6 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
-
-	delete [] script;		// free the memory allocated for the script
 
 	return 0;
 }
