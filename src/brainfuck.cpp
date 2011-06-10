@@ -1,32 +1,18 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <cstdlib>
 #include <stack>
-
-std::string loadfile(const char* name)
-{
-	std::ifstream f;
-	std::stringbuf sb;
-	f.exceptions(std::ios::failbit);
-
-	f.open(name, std::ios::binary | std::ios::in);
-	f.get(sb, EOF);
-	f.close();
-	std::string str(sb.str());
-	return str;
-}
+#include "functions.hpp"
 
 int main(int argc, char *argv[])
 {
 	static char array[30000];		// fields
-	char *p = array;				// pointer to the current field
-	std::stack<std::string::iterator> brackets;		// loop beginnings locations
+	char* p = array;				// pointer to the current field
+	std::stack<std::string::iterator> brackets;		// loop beginnings' locations
 
 	std::string script;		// script data
 	int size;			// size of the script file
 
-	if (argc < 2)		// Was the script name specified?
+	if (argc < 2)		// was the script name specified?
 	{
 		std::cerr << "Usage:\n\tbrainfuck FILE_TO_READ" << std::endl;
 		exit(1);
@@ -42,6 +28,8 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
+
+	stripComments(script);
 
 	std::string::iterator i = script.begin();
 

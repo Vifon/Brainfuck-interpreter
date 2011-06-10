@@ -3,7 +3,7 @@ CXX=g++
 CFLAGS=-pedantic -O2
 CXXFLAGS=$(CFLAGS)
 LFLAGS=
-OBJS=objs/brainfuck.o
+OBJS=objs/brainfuck.o objs/functions.o
 
 all: objs ./brainfuck
 
@@ -12,9 +12,13 @@ all: objs ./brainfuck
 	@$(CXX) $(LFLAGS) $(OBJS) -o ./brainfuck
 	@echo "	`tput setaf 2``tput bold`COMPILATION SUCCESSFUL`tput sgr0`"
 
-objs/brainfuck.o: src/brainfuck.cpp
+objs/brainfuck.o: src/brainfuck.cpp src/functions.hpp
 	@echo "	CXX src/brainfuck.cpp"
 	@$(CXX) $(CXXFLAGS) -c src/brainfuck.cpp -o $@
+
+objs/functions.o: src/functions.cpp src/functions.hpp
+	@echo "	CXX src/functions.cpp"
+	@$(CXX) $(CXXFLAGS) -c src/functions.cpp -o $@
 
 
 
